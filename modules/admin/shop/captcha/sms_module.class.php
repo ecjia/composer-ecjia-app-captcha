@@ -17,7 +17,7 @@ class sms_module extends api_admin implements api_interface {
 // 	    if (!preg_match($chars, $value)) {
 // 	        return new ecjia_error('mobile_error', '手机号码格式错误');
 // 	    }
-		$check_mobile = Ecjia\App\Sms\Helper::check_mobile($value);
+		$check_mobile = \Ecjia\App\Sms\Helper::check_mobile($value);
 		if (is_ecjia_error($check_mobile)) {
 		    return $check_mobile;
 		}
