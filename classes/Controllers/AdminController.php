@@ -57,11 +57,11 @@ class AdminController extends AdminBase
 
         $captcha_selected       = intval(ecjia::config('captcha'));
         $screens = [
-            new CaptchaScreen('captcha_register', CaptchaEnum::CAPTCHA_REGISTER, __('新用户注册', 'captcha')),
-            new CaptchaScreen('captcha_login', CaptchaEnum::CAPTCHA_LOGIN, __('用户登录', 'captcha')),
-            new CaptchaScreen('captcha_comment', CaptchaEnum::CAPTCHA_COMMENT, __('发表评论', 'captcha')),
+//            new CaptchaScreen('captcha_register', CaptchaEnum::CAPTCHA_REGISTER, __('新用户注册', 'captcha')),
+//            new CaptchaScreen('captcha_login', CaptchaEnum::CAPTCHA_LOGIN, __('用户登录', 'captcha')),
+//            new CaptchaScreen('captcha_comment', CaptchaEnum::CAPTCHA_COMMENT, __('发表评论', 'captcha')),
             new CaptchaScreen('captcha_admin', CaptchaEnum::CAPTCHA_ADMIN, __('后台管理员登录', 'captcha')),
-            new CaptchaScreen('captcha_message', CaptchaEnum::CAPTCHA_MESSAGE, __('留言板留言', 'captcha')),
+//            new CaptchaScreen('captcha_message', CaptchaEnum::CAPTCHA_MESSAGE, __('留言板留言', 'captcha')),
         ];
         $captcha_selected_render = (new CaptchaScreenManager($screens))->render($captcha_selected);
 
