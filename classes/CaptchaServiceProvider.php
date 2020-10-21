@@ -4,13 +4,14 @@ namespace Ecjia\App\Captcha;
 
 use ecjia;
 use Ecjia\App\Captcha\Tags\CaptchaTag;
+use ecjia_admin_log;
 use RC_Loader;
 use RC_Service;
 use Royalcms\Component\App\AppParentServiceProvider;
 
-class CaptchaServiceProvider extends  AppParentServiceProvider
+class CaptchaServiceProvider extends AppParentServiceProvider
 {
-    
+
     public function boot()
     {
         $this->package('ecjia/app-captcha');
@@ -20,8 +21,10 @@ class CaptchaServiceProvider extends  AppParentServiceProvider
 
         //注册模板插件
         ecjia::register_view_plugin('function', 'captcha', array(CaptchaTag::class, 'ecjia_function_captcha'));
+
+        $this->assignAdminLogContent();
     }
-    
+
     public function register()
     {
         $this->registerAppService();
@@ -35,5 +38,10 @@ class CaptchaServiceProvider extends  AppParentServiceProvider
         RC_Service::addService('plugin_list', 'captcha', 'Ecjia\App\Captcha\Services\PluginListService');
         RC_Service::addService('plugin_uninstall', 'captcha', 'Ecjia\App\Captcha\Services\PluginUninstallService');
     }
-    
+
+    protected function assignAdminLogContent()
+    {
+        ecjia_admin_log::instance()->add_object('config', __('配置', 'captcha'));
+    }
+
 }
