@@ -8,6 +8,8 @@ namespace Ecjia\App\Captcha\Controllers;
 use admin_nav_here;
 use ecjia;
 use Ecjia\App\Captcha\Enums\CaptchaEnum;
+use Ecjia\Component\CaptchaScreen\CaptchaScreen;
+use Ecjia\Component\CaptchaScreen\CaptchaScreenManager;
 use ecjia_admin;
 use ecjia_config;
 use ecjia_screen;
@@ -51,38 +53,19 @@ class AdminController extends AdminBase
         RC_Script::enqueue_script('jquery-form');
         RC_Script::enqueue_script('captcha', RC_App::apps_url('statics/js/captcha.js', $this->__FILE__), array());
         RC_Script::localize_script('captcha', 'js_lang_captcha', config('app-captcha::jslang.captcha'));
+        RC_Script::localize_script('captcha', 'admin_captcha_lang', config('app-captcha::jslang.admin_captcha_lang'));
 
-        $admin_captcha_lang = array(
-            'captcha_width_required'  => __('请输入验证码图片宽度！', 'captcha'),
-            'captcha_width_min'       => __('验证码图片宽度不能小于40！', 'captcha'),
-            'captcha_width_max'       => __('验证码图片宽度不能大于145！', 'captcha'),
-            'captcha_height_required' => __('请输入验证码图片高度！', 'captcha'),
-            'captcha_height_min'      => __('验证码图片高度不能小于15！', 'captcha'),
-            'captcha_height_max'      => __('验证码图片高度不能大于50！', 'captcha'),
-            'setupConfirm'            => __('您确定要更换验证码样式吗？', 'captcha'),
-            'is_checked'              => __('您已选中此验证码样式！', 'captcha'),
-        );
-        RC_Script::localize_script('captcha', 'admin_captcha_lang', $admin_captcha_lang);
+        $captcha_selected       = intval(ecjia::config('captcha'));
+        $screens = [
+            new CaptchaScreen('captcha_register', CaptchaEnum::CAPTCHA_REGISTER, __('新用户注册', 'captcha')),
+            new CaptchaScreen('captcha_login', CaptchaEnum::CAPTCHA_LOGIN, __('用户登录', 'captcha')),
+            new CaptchaScreen('captcha_comment', CaptchaEnum::CAPTCHA_COMMENT, __('发表评论', 'captcha')),
+            new CaptchaScreen('captcha_admin', CaptchaEnum::CAPTCHA_ADMIN, __('后台管理员登录', 'captcha')),
+            new CaptchaScreen('captcha_message', CaptchaEnum::CAPTCHA_MESSAGE, __('留言板留言', 'captcha')),
+        ];
+        $captcha_selected_render = (new CaptchaScreenManager($screens))->render($captcha_selected);
 
-        $captcha       = intval(ecjia::config('captcha'));
-        $captcha_check = array();
-        if ($captcha & CaptchaEnum::CAPTCHA_REGISTER) {
-            $captcha_check['register'] = 'checked="checked"';
-        }
-        if ($captcha & CaptchaEnum::CAPTCHA_LOGIN) {
-            $captcha_check['login'] = 'checked="checked"';
-        }
-        if ($captcha & CaptchaEnum::CAPTCHA_COMMENT) {
-            $captcha_check['comment'] = 'checked="checked"';
-        }
-        if ($captcha & CaptchaEnum::CAPTCHA_ADMIN) {
-            $captcha_check['admin'] = 'checked="checked"';
-        }
-        if ($captcha & CaptchaEnum::CAPTCHA_MESSAGE) {
-            $captcha_check['message'] = 'checked="checked"';
-        }
-
-        if ($captcha & CaptchaEnum::CAPTCHA_LOGIN_FAIL) {
+        if ($captcha_selected & CaptchaEnum::CAPTCHA_LOGIN_FAIL) {
             $captcha_check['login_fail_yes'] = 'checked="checked"';
         } else {
             $captcha_check['login_fail_no'] = 'checked="checked"';
@@ -92,6 +75,7 @@ class AdminController extends AdminBase
         $captcha_check['captcha_height'] = ecjia::config('captcha_height');
 
         $this->assign('captcha', $captcha_check);
+        $this->assign('captcha_selected_render', $captcha_selected_render);
 
         $captchas = $this->captcha->captcha_list();
 
