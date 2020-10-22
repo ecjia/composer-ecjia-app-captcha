@@ -9,7 +9,7 @@ use ecjia;
 use Ecjia\System\BaseController\EcjiaFrontController;
 use RC_Loader;
 
-class index extends EcjiaFrontController
+class IndexController extends EcjiaFrontController
 {
     public function __construct()
     {
