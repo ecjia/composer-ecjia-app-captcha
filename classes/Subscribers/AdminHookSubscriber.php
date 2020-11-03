@@ -26,7 +26,7 @@ class AdminHookSubscriber
                 $captcha_url = $captcha->current_captcha_url(true);
 
                 $click_for_another = __('看不清？点击更换另一个验证码。', 'captcha');
-                $label_captcha     = __('验证码：', 'captcha');
+                $label_captcha     = __('验证码', 'captcha');
 
                 $validate_length = 4;
                 $validate_url    = RC_Uri::url('captcha/admin_captcha/check_validate');
