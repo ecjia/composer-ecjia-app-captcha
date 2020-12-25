@@ -55,6 +55,8 @@ class AdminPluginController extends AdminBase
 
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('可用验证码样式', 'captcha')));
 
+        $this->assign('action_link', array('text' => __('验证码配置', 'captcha'), 'href' => RC_Uri::url('captcha/admin_config/init')));
+
         $this->assign('ur_here', __('可用验证码样式', 'captcha'));
         $this->assign('captchas', $captchas);
         $this->assign('current_captcha', ecjia::config('captcha_style'));
