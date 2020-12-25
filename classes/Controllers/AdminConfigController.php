@@ -16,22 +16,18 @@ use ecjia_screen;
 use RC_App;
 use RC_ENV;
 use RC_Lang;
-use RC_Loader;
 use RC_Script;
 use RC_Style;
 use RC_Uri;
 
 class AdminConfigController extends AdminBase
 {
-    private $captcha;
 
     public function __construct()
     {
         parent::__construct();
 
         RC_Lang::load('captcha_manage');
-
-        $this->captcha = RC_Loader::load_app_class('captcha_method');
 
         if (!ecjia::config('captcha_style', ecjia::CONFIG_CHECK)) {
             ecjia_config::instance()->insert_config('hidden', 'captcha_style', '', array('type' => 'hidden'));

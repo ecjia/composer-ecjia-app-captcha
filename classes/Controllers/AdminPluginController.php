@@ -7,6 +7,7 @@ namespace Ecjia\App\Captcha\Controllers;
 
 use admin_nav_here;
 use ecjia;
+use Ecjia\App\Captcha\CaptchaPlugin;
 use Ecjia\App\Captcha\Enums\CaptchaEnum;
 use Ecjia\Component\CaptchaScreen\CaptchaScreen;
 use Ecjia\Component\CaptchaScreen\CaptchaScreenManager;
@@ -23,15 +24,12 @@ use RC_Uri;
 
 class AdminPluginController extends AdminBase
 {
-    private $captcha;
 
     public function __construct()
     {
         parent::__construct();
 
         RC_Lang::load('captcha_manage');
-
-        $this->captcha = RC_Loader::load_app_class('captcha_method');
 
         if (!ecjia::config('captcha_style', ecjia::CONFIG_CHECK)) {
             ecjia_config::instance()->insert_config('hidden', 'captcha_style', '', array('type' => 'hidden'));
@@ -51,7 +49,7 @@ class AdminPluginController extends AdminBase
         /* 检查权限 */
         $this->admin_priv('captcha_manage');
 
-        $captchas = $this->captcha->captcha_list();
+        $captchas = (new CaptchaPlugin())->availablePluginList();
 
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('可用验证码样式', 'captcha')));
 

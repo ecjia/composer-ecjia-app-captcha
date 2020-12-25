@@ -6,6 +6,7 @@ namespace Ecjia\App\Captcha\Subscribers;
 
 use captcha_factory;
 use ecjia;
+use Ecjia\App\Captcha\CaptchaPlugin;
 use Ecjia\App\Captcha\Enums\CaptchaEnum;
 use ecjia_admin;
 use RC_ENV;
@@ -22,7 +23,7 @@ class AdminHookSubscriber
         if (ecjia::config('captcha_style', ecjia::CONFIG_EXISTS) &&
             (intval(ecjia::config('captcha')) & CaptchaEnum::CAPTCHA_ADMIN) &&
             RC_ENV::gd_version() > 0) {
-            $captcha = RC_Loader::load_app_class('captcha_method', 'captcha');
+            $captcha = new CaptchaPlugin();
             if ($captcha->check_activation_captcha()) {
                 $captcha_url = $captcha->current_captcha_url(true);
 
@@ -109,8 +110,7 @@ EOF;
             !empty($_SESSION['captcha_word']) &&
             (intval(ecjia::config('captcha')) & CaptchaEnum::CAPTCHA_ADMIN)) {
             /* 检查验证码是否正确 */
-            RC_Loader::load_app_class('captcha_factory', 'captcha', false);
-            $validator = new captcha_factory(ecjia::config('captcha_style'));
+            $validator = (new CaptchaPlugin)->channel(ecjia::config('captcha_style'));
             if (isset($args['captcha']) && !$validator->verify_word($args['captcha'])) {
                 return __('您输入的验证码不正确。', 'captcha');
             }

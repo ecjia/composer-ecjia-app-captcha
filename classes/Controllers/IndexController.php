@@ -6,8 +6,8 @@
 namespace Ecjia\App\Captcha\Controllers;
 
 use ecjia;
+use Ecjia\App\Captcha\CaptchaPlugin;
 use Ecjia\System\BaseController\EcjiaFrontController;
-use RC_Loader;
 
 class IndexController extends EcjiaFrontController
 {
@@ -20,8 +20,8 @@ class IndexController extends EcjiaFrontController
     {
         $code = trim($_GET['code']);
 
-        $captcha = RC_Loader::load_app_class('captcha_method');
-        $image   = $captcha->captcha_style_image($code);
+        $image = (new CaptchaPlugin())->captcha_style_image($code);
+
         echo $image;
     }
 

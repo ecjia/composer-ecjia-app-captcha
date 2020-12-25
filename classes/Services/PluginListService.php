@@ -1,7 +1,7 @@
 <?php
 namespace Ecjia\App\Captcha\Services;
 
-use RC_Loader;
+use Ecjia\App\Captcha\CaptchaPlugin;
 
 /**
  * 轮播图插件列表API
@@ -12,9 +12,7 @@ class PluginListService
 	
 	public function handle(& $options)
     {
-		$captcha = RC_Loader::load_app_class('captcha_method', 'captcha');
-		
-		$list = $captcha->captcha_list();
+		$list = (new CaptchaPlugin())->availablePluginList();
 
 		return $list;
 	}

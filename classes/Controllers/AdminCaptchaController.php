@@ -6,6 +6,7 @@
 namespace Ecjia\App\Captcha\Controllers;
 
 use ecjia;
+use Ecjia\App\Captcha\CaptchaPlugin;
 use RC_Loader;
 
 class AdminCaptchaController extends AdminBase
@@ -19,8 +20,8 @@ class AdminCaptchaController extends AdminBase
     {
         $code = trim($_GET['code']);
 
-        $captcha = RC_Loader::load_app_class('captcha_method');
-        $image   = $captcha->captcha_style_image($code);
+        $image   = (new CaptchaPlugin())->captcha_style_image($code);
+
         echo $image;
     }
 
