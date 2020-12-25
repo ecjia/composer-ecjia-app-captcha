@@ -17,7 +17,7 @@ class SettingMenuService
 	public function handle(& $options)
     {
 
-        $menus = ecjia_admin::make_admin_menu('05_captcha_setting', __('验证码设置', 'captcha'), RC_Uri::url('captcha/admin/init'), 5)->add_purview('captcha_manage');
+        $menus = ecjia_admin::make_admin_menu('05_captcha_setting', __('验证码设置', 'captcha'), RC_Uri::url('captcha/admin_config/init'), 5)->add_purview('captcha_manage');
     	
     	return $menus;
     	
