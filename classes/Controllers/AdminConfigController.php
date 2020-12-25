@@ -21,7 +21,7 @@ use RC_Script;
 use RC_Style;
 use RC_Uri;
 
-class AdminController extends AdminBase
+class AdminConfigController extends AdminBase
 {
     private $captcha;
 
@@ -57,10 +57,10 @@ class AdminController extends AdminBase
 
         $captcha_selected       = intval(ecjia::config('captcha'));
         $screens = [
+            new CaptchaScreen('captcha_admin', CaptchaEnum::CAPTCHA_ADMIN, __('后台管理员登录', 'captcha')),
 //            new CaptchaScreen('captcha_register', CaptchaEnum::CAPTCHA_REGISTER, __('新用户注册', 'captcha')),
 //            new CaptchaScreen('captcha_login', CaptchaEnum::CAPTCHA_LOGIN, __('用户登录', 'captcha')),
 //            new CaptchaScreen('captcha_comment', CaptchaEnum::CAPTCHA_COMMENT, __('发表评论', 'captcha')),
-            new CaptchaScreen('captcha_admin', CaptchaEnum::CAPTCHA_ADMIN, __('后台管理员登录', 'captcha')),
 //            new CaptchaScreen('captcha_message', CaptchaEnum::CAPTCHA_MESSAGE, __('留言板留言', 'captcha')),
         ];
         $captcha_selected_render = (new CaptchaScreenManager($screens))->render($captcha_selected);
@@ -77,8 +77,6 @@ class AdminController extends AdminBase
         $this->assign('captcha', $captcha_check);
         $this->assign('captcha_selected_render', $captcha_selected_render);
 
-        $captchas = $this->captcha->captcha_list();
-
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('验证码设置', 'captcha')));
         ecjia_screen::get_current_screen()->add_help_tab(array(
             'id'      => 'overview',
@@ -92,13 +90,12 @@ class AdminController extends AdminBase
             '<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:验证码设置" target="_blank">关于验证码设置帮助文档</a>', 'captcha') . '</p>'
         );
 
+        $this->assign('current_code', 'captcha');
         $this->assign('ur_here', __('验证码设置', 'captcha'));
-        $this->assign('captchas', $captchas);
         $this->assign('current_captcha', ecjia::config('captcha_style'));
-        $this->assign('form_action', RC_Uri::url('captcha/admin/save_config'));
+        $this->assign('form_action', RC_Uri::url('captcha/admin_config/save_config'));
 
-        $this->assign_lang();
-        return $this->display('captcha_list.dwt');
+        return $this->display('captcha_setting.dwt');
     }
 
     /**
@@ -106,48 +103,36 @@ class AdminController extends AdminBase
      */
     public function save_config()
     {
-        if (RC_ENV::gd_version() == 0) {
-            return $this->showmessage(__('开启验证码需要服务GD库支持，而您的服务器不支持GD。', 'captcha'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+        try {
+            if (RC_ENV::gd_version() == 0) {
+                return $this->showmessage(__('开启验证码需要服务GD库支持，而您的服务器不支持GD。', 'captcha'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+            }
+
+            $captcha = 0;
+            $captcha = empty($_POST['captcha_register']) ? $captcha : $captcha | CaptchaEnum::CAPTCHA_REGISTER;
+            $captcha = empty($_POST['captcha_login']) ? $captcha : $captcha | CaptchaEnum::CAPTCHA_LOGIN;
+            $captcha = empty($_POST['captcha_comment']) ? $captcha : $captcha | CaptchaEnum::CAPTCHA_COMMENT;
+            $captcha = empty($_POST['captcha_admin']) ? $captcha : $captcha | CaptchaEnum::CAPTCHA_ADMIN;
+            $captcha = empty($_POST['captcha_login_fail']) ? $captcha : $captcha | CaptchaEnum::CAPTCHA_LOGIN_FAIL;
+            $captcha = empty($_POST['captcha_message']) ? $captcha : $captcha | CaptchaEnum::CAPTCHA_MESSAGE;
+
+            $captcha_width  = empty($_POST['captcha_width']) ? 145 : intval($_POST['captcha_width']);
+            $captcha_height = empty($_POST['captcha_height']) ? 20 : intval($_POST['captcha_height']);
+
+            ecjia_config::instance()->write_config('captcha', $captcha);
+            ecjia_config::instance()->write_config('captcha_width', $captcha_width);
+            ecjia_config::instance()->write_config('captcha_height', $captcha_height);
+
+            ecjia_admin::admin_log(__('工具>验证码设置', 'captcha'), 'setup', 'config');
+
+            return $this->showmessage(__('设置保存成功！', 'captcha'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
+        } catch (\Exception $exception) {
+            return $this->showmessage($exception->getMessage(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
+        } catch (\Error $exception) {
+            return $this->showmessage($exception->getMessage(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
         }
-
-        $captcha = 0;
-        $captcha = empty($_POST['captcha_register']) ? $captcha : $captcha | CaptchaEnum::CAPTCHA_REGISTER;
-        $captcha = empty($_POST['captcha_login']) ? $captcha : $captcha | CaptchaEnum::CAPTCHA_LOGIN;
-        $captcha = empty($_POST['captcha_comment']) ? $captcha : $captcha | CaptchaEnum::CAPTCHA_COMMENT;
-        $captcha = empty($_POST['captcha_admin']) ? $captcha : $captcha | CaptchaEnum::CAPTCHA_ADMIN;
-        $captcha = empty($_POST['captcha_login_fail']) ? $captcha : $captcha | CaptchaEnum::CAPTCHA_LOGIN_FAIL;
-        $captcha = empty($_POST['captcha_message']) ? $captcha : $captcha | CaptchaEnum::CAPTCHA_MESSAGE;
-
-        $captcha_width  = empty($_POST['captcha_width']) ? 145 : intval($_POST['captcha_width']);
-        $captcha_height = empty($_POST['captcha_height']) ? 20 : intval($_POST['captcha_height']);
-
-        ecjia_config::instance()->write_config('captcha', $captcha);
-        ecjia_config::instance()->write_config('captcha_width', $captcha_width);
-        ecjia_config::instance()->write_config('captcha_height', $captcha_height);
-
-        ecjia_admin::admin_log(__('工具>验证码设置', 'captcha'), 'setup', 'config');
-
-        return $this->showmessage(__('设置保存成功！', 'captcha'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS);
     }
 
-    /**
-     * 切换验证码展示样式
-     */
-    public function apply()
-    {
-        $this->admin_priv('captcha_manage', ecjia::MSGTYPE_JSON);
-
-        $captcha_code = trim($_GET['code']);
-        if (ecjia::config('current_captcha') == $captcha_code) {
-            return $this->showmessage(__('操作成功！', 'captcha'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
-        }
-
-        ecjia_config::item()->write('captcha_style', $captcha_code);
-
-        ecjia_admin::admin_log(__('工具>切换验证码展示样式', 'captcha'), 'setup', 'config');
-
-        return $this->showmessage(__('启用验证码样式成功。', 'captcha'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('captcha/admin/init')));
-    }
 }
 
 // end
