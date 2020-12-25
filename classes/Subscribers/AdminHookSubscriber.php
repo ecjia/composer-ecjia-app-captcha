@@ -7,6 +7,7 @@ namespace Ecjia\App\Captcha\Subscribers;
 use captcha_factory;
 use ecjia;
 use Ecjia\App\Captcha\Enums\CaptchaEnum;
+use ecjia_admin;
 use RC_ENV;
 use RC_Hook;
 use RC_Loader;
@@ -123,6 +124,14 @@ EOF;
         return $route;
     }
 
+    public static function append_admin_setting_group($menus)
+    {
+        $menus[] = ecjia_admin::make_admin_menu('nav-header', '验证码', '', 130)->add_purview(array('captcha_manage'));
+        $menus[] = ecjia_admin::make_admin_menu('captcha', '验证码设置', RC_Uri::url('captcha/admin_config/init'), 131)->add_purview('captcha_manage');
+
+        return $menus;
+    }
+
 
     /**
      * Register the listeners for the subscriber.
@@ -136,6 +145,7 @@ EOF;
         RC_Hook::add_filter('admin_login_validate', array(__CLASS__, 'admin_login_validate'));
         RC_Hook::add_filter('admin_access_public_route', array(__CLASS__, 'set_admin_captcha_access'));
 
+        RC_Hook::add_action('append_admin_setting_group', array(__CLASS__, 'append_admin_setting_group'));
     }
 
 }
