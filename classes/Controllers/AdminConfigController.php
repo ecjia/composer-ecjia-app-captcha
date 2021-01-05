@@ -10,6 +10,7 @@ use ecjia;
 use Ecjia\App\Captcha\Enums\CaptchaEnum;
 use Ecjia\Component\CaptchaScreen\CaptchaScreen;
 use Ecjia\Component\CaptchaScreen\CaptchaScreenManager;
+use Ecjia\Component\CaptchaScreen\Facades\CaptchaManager;
 use ecjia_admin;
 use ecjia_config;
 use ecjia_screen;
@@ -52,14 +53,7 @@ class AdminConfigController extends AdminBase
         RC_Script::localize_script('captcha', 'admin_captcha_lang', config('app-captcha::jslang.admin_captcha_lang'));
 
         $captcha_selected       = intval(ecjia::config('captcha'));
-        $screens = [
-            new CaptchaScreen('captcha_admin', CaptchaEnum::CAPTCHA_ADMIN, __('后台管理员登录', 'captcha')),
-//            new CaptchaScreen('captcha_register', CaptchaEnum::CAPTCHA_REGISTER, __('新用户注册', 'captcha')),
-//            new CaptchaScreen('captcha_login', CaptchaEnum::CAPTCHA_LOGIN, __('用户登录', 'captcha')),
-//            new CaptchaScreen('captcha_comment', CaptchaEnum::CAPTCHA_COMMENT, __('发表评论', 'captcha')),
-//            new CaptchaScreen('captcha_message', CaptchaEnum::CAPTCHA_MESSAGE, __('留言板留言', 'captcha')),
-        ];
-        $captcha_selected_render = (new CaptchaScreenManager($screens))->render($captcha_selected);
+        $captcha_selected_render = CaptchaManager::render($captcha_selected);
 
         if ($captcha_selected & CaptchaEnum::CAPTCHA_LOGIN_FAIL) {
             $captcha_check['login_fail_yes'] = 'checked="checked"';
