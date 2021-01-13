@@ -49,6 +49,12 @@ class AdminPluginController extends AdminBase
         /* 检查权限 */
         $this->admin_priv('captcha_manage');
 
+        RC_Script::enqueue_script('jquery-validate');
+        RC_Script::enqueue_script('jquery-form');
+        RC_Script::enqueue_script('captcha', RC_App::apps_url('statics/js/captcha.js', $this->__FILE__), array());
+        RC_Script::localize_script('captcha', 'js_lang_captcha', config('app-captcha::jslang.captcha'));
+        RC_Script::localize_script('captcha', 'admin_captcha_lang', config('app-captcha::jslang.admin_captcha_lang'));
+
         $captchas = (new CaptchaPlugin())->availablePluginList();
 
         ecjia_screen::get_current_screen()->add_nav_here(new admin_nav_here(__('可用验证码样式', 'captcha')));
@@ -80,7 +86,7 @@ class AdminPluginController extends AdminBase
 
             ecjia_admin::admin_log(__('工具>切换验证码展示样式', 'captcha'), 'setup', 'config');
 
-            return $this->showmessage(__('启用验证码样式成功。', 'captcha'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('captcha/admin/init')));
+            return $this->showmessage(__('启用验证码样式成功。', 'captcha'), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_SUCCESS, array('pjaxurl' => RC_Uri::url('captcha/admin_plugin/init')));
         } catch (\Exception $exception) {
             return $this->showmessage($exception->getMessage(), ecjia::MSGTYPE_JSON | ecjia::MSGSTAT_ERROR);
         } catch (\Error $exception) {

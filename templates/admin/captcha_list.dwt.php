@@ -34,7 +34,7 @@
                     <div class="ft">
                         <!-- {$captcha.format_description} -->
                     </div>
-                    <div class="input" data-url='{url path="captcha/admin/apply" args="code={$captcha.code}"}'><span>{t domain="captcha"}启用此验证码{/t}</span></div>
+                    <div class="input" data-url='{url path="captcha/admin_plugin/apply" args="code={$captcha.code}"}'><span>{t domain="captcha"}启用此验证码{/t}</span></div>
 
                 </li>
                 <!-- {/foreach} -->
