@@ -80,6 +80,8 @@ class AdminConfigController extends AdminBase
             '<p>' . __('<a href="https://ecjia.com/wiki/帮助:ECJia智能后台:验证码设置" target="_blank">关于验证码设置帮助文档</a>', 'captcha') . '</p>'
         );
 
+        $this->assign('action_link', array('text' => __('验证码插件', 'captcha'), 'href' => RC_Uri::url('captcha/admin_plugin/init')));
+
         $this->assign('current_code', 'captcha');
         $this->assign('ur_here', __('验证码设置', 'captcha'));
         $this->assign('current_captcha', ecjia::config('captcha_style'));
