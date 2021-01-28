@@ -1,1 +1,1 @@
-#ecjia-app-captcha
+# composer-ecjia-app-captcha
