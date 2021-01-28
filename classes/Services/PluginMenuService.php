@@ -59,7 +59,7 @@ class PluginMenuService
      * @param $options
      * @return mixed
      */
-	public function handle(& $options)
+	public function handle($options)
     {
 		$menus = ecjia_admin::make_admin_menu('captcha_list', __('验证码样式', 'captcha'), RC_Uri::url('captcha/admin_plugin/init'), 31)->add_purview('captcha_manage')->add_base('captcha');
 

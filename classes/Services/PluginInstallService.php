@@ -11,7 +11,7 @@ use RC_Plugin;
 class PluginInstallService
 {
 	
-	public function handle(& $options)
+	public function handle($options)
     {
 	    if (isset($options['file'])) {
 	        $plugin_file = $options['file'];

@@ -10,7 +10,7 @@ use Ecjia\App\Captcha\CaptchaPlugin;
 class PluginListService
 {
 	
-	public function handle(& $options)
+	public function handle($options)
     {
 		$list = (new CaptchaPlugin())->availablePluginList();
 
